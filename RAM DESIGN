@@ -1,0 +1,62 @@
+// DEVELOP A SIMPLE SYNCHRONOUS RAM MODULE WITH READ AND WRITE OPERATIONS.
+
+module sync_ram(
+    input  wire clk,
+    input  wire we,
+    input  wire [7:0] data_in,
+    input  wire [7:0] addr,
+    output wire [7:0] data_out
+);
+
+reg [7:0] ram [511:0]; 
+
+always @(posedge clk) begin
+    if (we) begin
+        ram[addr] <= data_in;
+    end
+end
+
+always @(posedge clk) begin
+    data_out <= ram[addr];
+end
+
+endmodule
+
+// CODE, TESTBENCH, AND SIMULATION DEMONSTRATING RAM FUNCTIONALITY.
+
+module sync_ram_testbench;
+
+reg clk;
+reg we;
+reg [7:0] data_in;
+reg [7:0] addr;
+wire [7:0] data_out;
+
+sync_ram uut(
+    .clk(clk),
+    .we(we),
+    .data_in(data_in),
+    .addr(addr),
+    .data_out(data_out)
+);
+
+initial begin
+    clk = 0;
+    we = 0;
+    addr = 0;
+    data_in = 0;
+
+    #10
+    we = 1;
+    data_in = 8'hAA;
+    addr = 0;
+    #10;
+    we = 0;
+    addr = 0;
+    #10;
+    $display("Data out: %h", data_out);
+end
+
+always #5 clk = ~clk;
+
+endmodule
